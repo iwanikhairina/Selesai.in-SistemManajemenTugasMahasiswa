@@ -1,0 +1,19 @@
+context TaskManager::getAllTasks() : Set(Task)
+-- Precondition:
+pre:
+  -- Sistem harus dalam kondisi aktif (misalnya, tidak dalam mode maintenance)
+  System.isActive = true and
+
+  -- Pengguna (caller) harus terautentikasi
+  self.currentUser <> null and
+
+  -- Pengguna harus memiliki peran yang diperbolehkan untuk melihat tugas
+  self.currentUser.role = 'mahasiswa' or self.currentUser.role = 'dosen'
+
+-- Postcondition:
+post:
+  -- Hasil (result) berisi semua tugas yang dikelola oleh sistem
+  result = self.tasks->asSet() and
+
+  -- Jumlah tugas yang dikembalikan sama dengan jumlah tugas yang tersimpan
+  result->size() = self.tasks->size()

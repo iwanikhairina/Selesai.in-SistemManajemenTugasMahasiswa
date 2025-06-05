@@ -1,0 +1,9 @@
+context TaskManager::getAllTasks() : Set(Task)
+
+-- Precondition:
+pre: -- Tidak ada prasyarat khusus untuk melihat tugas
+     true
+
+-- Postcondition:
+post: -- Mengembalikan semua tugas yang tersimpan di sistem
+      result = self.tasks->asSet()

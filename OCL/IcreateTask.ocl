@@ -1,0 +1,20 @@
+context Task::createTask(id: String, judul: String, deskripsi: String, deadline: DateTime, kategori: Kategori, pembuat: String): Task
+pre: -- ID tugas harus unik dalam sistem
+    TaskManager.allInstances()->forAll(tm | 
+        tm.tasks->forAll(t | t.id <> id)
+    )
+post: -- Tugas baru berhasil dibuat dan ditambahkan ke TaskManager
+    TaskManager.allInstances()->exists(tm | 
+        tm.tasks->includes(result) and 
+        result.id = id and 
+        result.judul = judul and
+        result.deskripsi = deskripsi and
+        result.deadline = deadline and
+        result.kategori = kategori and
+        result.pembuat = pembuat
+    )
+context Task::createTask(id: String, judul: String, deskripsi: String, deadline: DateTime, kategori: Kategori, pembuat: String): Task
+pre: -- Deadline harus di masa depan
+    deadline > DateTime.now()
+post: -- Deadline tersimpan dengan benar
+    result.deadline = deadline and result.deadline > DateTime.now()

@@ -1,0 +1,16 @@
+context Dosen::tambahTugasManual(id: String, judul: String, deskripsi: String, deadline: DateTime): Task
+pre: -- Dosen harus terdaftar dalam sistem
+    Dosen.allInstances()->includes(self) and
+    self.id <> null and self.id.size() > 0
+post: -- Tugas berhasil dibuat dengan kategori TUGAS_KULIAH
+    result.pembuat = self.id and
+    result.kategori = Kategori::TUGAS_KULIAH
+context Dosen::tambahTugasOtomatis(): Set(Task)
+pre: -- Dosen harus memiliki mata kuliah yang valid
+    self.nip <> null and self.nip.size() > 0
+post: -- Tugas otomatis dibuat berdasarkan jadwal kuliah
+    result->forAll(t | 
+        t.pembuat = self.id and 
+        t.kategori = Kategori::TUGAS_KULIAH and
+        t.deadline > DateTime.now()
+    )

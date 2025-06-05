@@ -1,0 +1,11 @@
+context Task
+inv: -- Kategori harus salah satu dari enum yang valid
+    self.kategori = Kategori::TUGAS_KULIAH or
+    self.kategori = Kategori::PRIBADI or
+    self.kategori = Kategori::ORGANISASI
+context TaskManager::deleteTask(taskId: String): Boolean
+post: -- Tugas lain tidak terpengaruh oleh penghapusan ini
+    self.tasks->forAll(t | 
+        t.id <> taskId implies 
+        self.tasks@pre->exists(oldTask | oldTask = t)
+    )
